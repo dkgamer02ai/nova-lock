@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.dkgamer02ai.lock",
+  "name": "Nova Lock",
+  "version": "0.1.0",
+  "author": "dkg",
+  "description": "Quickshell session lock with a split two-tone clock, profile picture and pill password field.",
+  "kinds": [
+    "service"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml"
+  }
+}
