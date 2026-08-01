@@ -137,43 +137,10 @@ Item {
       width: root.centerWidth
       spacing: Math.round(14 * root.centerScale)
 
-      // ---- Clock. Hours and minutes sit side by side in two theme colours.
-      RowLayout {
-        Layout.alignment: Qt.AlignHCenter
-        spacing: Math.round(root.clockFontSize * 0.18)
-
-        Text {
-          text: Qt.formatDateTime(clock.date, "HH")
-          color: Color.accent
-          font.family: Style.font.family
-          font.pixelSize: root.clockFontSize
-          font.weight: Font.DemiBold
-        }
-
-        Text {
-          text: Qt.formatDateTime(clock.date, "mm")
-          color: Util.alpha(Color.foreground, 0.72)
-          font.family: Style.font.family
-          font.pixelSize: root.clockFontSize
-          font.weight: Font.DemiBold
-        }
-      }
-
-      Text {
-        Layout.alignment: Qt.AlignHCenter
-        text: Qt.formatDateTime(clock.date, "dddd • d MMM").toUpperCase()
-        color: Color.lock.text
-        font.family: Style.font.family
-        font.pixelSize: Math.round(Style.font.title * 1.1)
-        font.weight: Font.DemiBold
-        font.letterSpacing: 2
-      }
-
       // ---- Profile picture. ~/.face if present, glyph fallback otherwise.
       Item {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Math.round(28 * root.centerScale)
-        Layout.bottomMargin: Math.round(18 * root.centerScale)
+        Layout.bottomMargin: Math.round(22 * root.centerScale)
         implicitWidth: root.avatarSize
         implicitHeight: root.avatarSize
 
@@ -228,10 +195,43 @@ Item {
         }
       }
 
+      // ---- Clock. Hours and minutes sit side by side in two theme colours.
+      RowLayout {
+        Layout.alignment: Qt.AlignHCenter
+        spacing: Math.round(root.clockFontSize * 0.18)
+
+        Text {
+          text: Qt.formatDateTime(clock.date, "HH")
+          color: Color.accent
+          font.family: Style.font.family
+          font.pixelSize: root.clockFontSize
+          font.weight: Font.DemiBold
+        }
+
+        Text {
+          text: Qt.formatDateTime(clock.date, "mm")
+          color: Util.alpha(Color.foreground, 0.72)
+          font.family: Style.font.family
+          font.pixelSize: root.clockFontSize
+          font.weight: Font.DemiBold
+        }
+      }
+
+      Text {
+        Layout.alignment: Qt.AlignHCenter
+        text: Qt.formatDateTime(clock.date, "dddd • d MMM").toUpperCase()
+        color: Color.lock.text
+        font.family: Style.font.family
+        font.pixelSize: Math.round(Style.font.title * 1.1)
+        font.weight: Font.DemiBold
+        font.letterSpacing: 2
+      }
+
       // ---- Password pill.
       Rectangle {
         id: field
         Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: Math.round(26 * root.centerScale)
         implicitWidth: Math.round(root.centerWidth * 0.86)
         implicitHeight: root.fieldHeight
         radius: height / 2
@@ -300,34 +300,47 @@ Item {
           elide: Text.ElideRight
         }
 
-        // One dot per typed character, popping in as it is typed.
-        Row {
-          id: dots
+        // One dot per typed character, popping in as it is typed. The row is
+        // clipped rather than scaled: scaling it against its own width made
+        // every keystroke re-solve the binding and jump.
+        Item {
+          id: dotsClip
           anchors.centerIn: parent
-          spacing: Math.round(root.dotSize * 0.75)
+          width: field.width - leadIcon.width - enterButton.width - root.fieldHeight
+          height: field.height
+          clip: true
           visible: root.passwordText.length > 0
-          // Long passwords must stay inside the pill, so the row shrinks
-          // instead of spilling past the icons.
-          scale: Math.min(1, (field.width - leadIcon.width - enterButton.width - root.fieldHeight) / Math.max(1, implicitWidth))
 
-          Repeater {
-            model: root.passwordText.length
+          Row {
+            id: dots
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: Math.round(root.dotSize * 0.75)
+            // Centred while the dots fit; once they outgrow the pill the row
+            // slides left so the newest dot stays in view.
+            x: width <= dotsClip.width ? (dotsClip.width - width) / 2 : dotsClip.width - width
 
-            Rectangle {
-              width: root.dotSize
-              height: root.dotSize
-              radius: width / 2
-              color: Color.lock.text
+            Behavior on x { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
 
-              Component.onCompleted: popIn.start()
-              NumberAnimation {
-                id: popIn
-                target: parent
-                property: "scale"
-                from: 0
-                to: 1
-                duration: 180
-                easing.type: Easing.OutBack
+            Repeater {
+              model: root.passwordText.length
+
+              Rectangle {
+                id: dot
+                width: root.dotSize
+                height: root.dotSize
+                radius: width / 2
+                color: Color.lock.text
+
+                Component.onCompleted: popIn.start()
+                NumberAnimation {
+                  id: popIn
+                  target: dot
+                  property: "scale"
+                  from: 0
+                  to: 1
+                  duration: 180
+                  easing.type: Easing.OutBack
+                }
               }
             }
           }
