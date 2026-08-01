@@ -321,17 +321,26 @@ Item {
 
             Behavior on x { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
 
+            // A Repeater over a plain int count rebuilds every delegate when
+            // the count changes, so animating on creation replayed the pop on
+            // the whole row each keystroke. Only the newest dot animates; the
+            // rebuilt ones come back already at rest.
             Repeater {
               model: root.passwordText.length
 
               Rectangle {
                 id: dot
+                required property int index
+
                 width: root.dotSize
                 height: root.dotSize
                 radius: width / 2
                 color: Color.lock.text
 
-                Component.onCompleted: popIn.start()
+                Component.onCompleted: {
+                  if (index === root.passwordText.length - 1) popIn.start()
+                }
+
                 NumberAnimation {
                   id: popIn
                   target: dot
