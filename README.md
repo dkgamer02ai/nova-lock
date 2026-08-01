@@ -9,16 +9,13 @@ whatever theme `omarchy theme set` last applied.
 ## Install
 
 ```bash
-git clone https://github.com/dkgamer02ai/nova-lock \
-  ~/.config/omarchy/plugins/io.github.dkgamer02ai.lock
-
-omarchy-shell shell rescanPlugins
 omarchy plugin disable omarchy.lock
-omarchy plugin enable io.github.dkgamer02ai.lock
+omarchy plugin add https://github.com/dkgamer02ai/nova-lock.git --enable
 ```
 
-Both plugins register the same `lock` IPC target, so the stock one must be disabled —
-otherwise `omarchy system lock` has two listeners.
+Disable the stock lock first: both plugins register the same `lock` IPC target, and
+the second one to register is ignored, so `omarchy system lock` would still reach
+whichever won the race.
 
 ## Preview without locking
 
@@ -31,10 +28,20 @@ omarchy-shell lock hidePreview
 
 Drop a square image at `~/.face`. Without one, a glyph placeholder is drawn instead.
 
+## Update
+
+```bash
+omarchy plugin update io.github.dkgamer02ai.lock
+omarchy restart shell
+```
+
+A restart is required after any change to the plugin's QML: `rescanPlugins` picks up
+new plugins but does not drop Quickshell's cache of already-loaded QML.
+
 ## Uninstall
 
 ```bash
-omarchy plugin disable io.github.dkgamer02ai.lock
+omarchy plugin remove io.github.dkgamer02ai.lock
 omarchy plugin enable omarchy.lock
 ```
 
