@@ -50,8 +50,25 @@ omarchy plugin enable omarchy.lock
 `Service.qml` is Omarchy's stock lock service, unchanged: PAM password and fingerprint
 flows, `WlSessionLock`, idle blanking and the `lock` IPC handler all behave exactly as
 they do on stock. Only `LockView.qml` — the presentation layer — is this project's.
-That also means it tracks upstream: if Omarchy changes the service, re-copy
-`/usr/share/omarchy/shell/plugins/lock/Service.qml` over this one.
+
+It is a *copy*, not a reference: `omarchy-plugin-validate` rejects symlinks inside a
+plugin folder, so there is no way to point at the original. A copy goes stale as soon
+as Omarchy patches the service upstream. To keep them in step automatically:
+
+```bash
+omarchy hook install post-update hooks/nova-lock-sync-service.sh
+```
+
+That re-copies the stock service after every `omarchy update`, but only when the two
+actually differ. The copy lands in this git worktree, so it shows up as a normal diff
+to review and commit rather than changing under you. Restart the shell afterwards.
+
+Check by hand any time:
+
+```bash
+diff /usr/share/omarchy/shell/plugins/lock/Service.qml \
+     ~/.config/omarchy/plugins/io.github.dkgamer02ai.lock/Service.qml
+```
 
 Tunable knobs live at the top of `LockView.qml`: `clockFontSize`, `centerWidth`,
 `avatarSize`, `fieldHeight`, `dotSize`.
