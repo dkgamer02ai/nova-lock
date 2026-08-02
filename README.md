@@ -56,12 +56,16 @@ plugin folder, so there is no way to point at the original. A copy goes stale as
 as Omarchy patches the service upstream. To keep them in step automatically:
 
 ```bash
-omarchy hook install post-update hooks/nova-lock-sync-service.sh
+omarchy hook install post-update \
+  ~/.config/omarchy/plugins/io.github.dkgamer02ai.lock/hooks/nova-lock-sync-service.sh
 ```
 
-That re-copies the stock service after every `omarchy update`, but only when the two
-actually differ. The copy lands in this git worktree, so it shows up as a normal diff
-to review and commit rather than changing under you. Restart the shell afterwards.
+`omarchy plugin add` never runs anything from a repo, so this is a separate opt-in
+step — skip it and the plugin still works, it just won't track upstream on its own.
+
+The hook re-copies the stock service after every `omarchy update`, but only when the
+two actually differ. The copy lands in this git worktree, so it shows up as a normal
+diff to review and commit rather than changing under you. Restart the shell afterwards.
 
 Check by hand any time:
 
