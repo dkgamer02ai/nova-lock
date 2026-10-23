@@ -3,6 +3,7 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 
 // Lock face for this plugin. Same property/signal contract as the stock
@@ -96,7 +97,7 @@ Item {
 
   Rectangle {
     anchors.fill: parent
-    color: Color.background
+    color: Commons.Color.background
 
     Image {
       id: wallpaper
@@ -124,7 +125,7 @@ Item {
     // the clock without a wash behind it.
     Rectangle {
       anchors.fill: parent
-      color: Color.background
+      color: Commons.Color.background
       opacity: 0.35
     }
 
@@ -152,15 +153,15 @@ Item {
           id: avatarBase
           anchors.fill: parent
           radius: width / 2
-          color: Util.alpha(Color.foreground, 0.10)
+          color: Util.alpha(Commons.Color.foreground, 0.10)
           border.width: 2
-          border.color: Util.alpha(Color.accent, 0.55)
+          border.color: Util.alpha(Commons.Color.accent, 0.55)
 
           Text {
             anchors.centerIn: parent
             visible: face.status !== Image.Ready
             text: "󰀄"
-            color: Util.alpha(Color.foreground, 0.55)
+            color: Util.alpha(Commons.Color.foreground, 0.55)
             font.family: Style.font.family
             font.pixelSize: Math.round(root.avatarSize * 0.5)
           }
@@ -206,7 +207,7 @@ Item {
 
         Text {
           text: Qt.formatDateTime(clock.date, "HH")
-          color: Color.accent
+          color: Commons.Color.accent
           font.family: Style.font.family
           font.pixelSize: root.clockFontSize
           font.weight: Font.DemiBold
@@ -214,7 +215,7 @@ Item {
 
         Text {
           text: Qt.formatDateTime(clock.date, "mm")
-          color: Util.alpha(Color.foreground, 0.72)
+          color: Util.alpha(Commons.Color.foreground, 0.72)
           font.family: Style.font.family
           font.pixelSize: root.clockFontSize
           font.weight: Font.DemiBold
@@ -224,7 +225,7 @@ Item {
       Text {
         Layout.alignment: Qt.AlignHCenter
         text: Qt.formatDateTime(clock.date, "dddd • d MMM").toUpperCase()
-        color: Color.lock.text
+        color: Commons.Color.lock.text
         font.family: Style.font.family
         font.pixelSize: Math.round(Style.font.title * 1.1)
         font.weight: Font.DemiBold
@@ -239,11 +240,11 @@ Item {
         implicitWidth: Math.round(root.centerWidth * 0.86)
         implicitHeight: root.fieldHeight
         radius: height / 2
-        color: Color.lock.background
+        color: Commons.Color.lock.background
         border.width: 2
         border.color: root.errorState
-          ? Color.lock.borderError
-          : Util.alpha(Color.lock.borderActive, passwordInput.activeFocus ? 0.9 : 0.35)
+          ? Commons.Color.lock.borderError
+          : Util.alpha(Commons.Color.lock.borderActive, passwordInput.activeFocus ? 0.9 : 0.35)
 
         Behavior on border.color { ColorAnimation { duration: 140 } }
 
@@ -255,7 +256,7 @@ Item {
           anchors.leftMargin: Math.round(root.fieldHeight * 0.32)
           anchors.verticalCenter: parent.verticalCenter
           text: root.fingerprintConfigured ? "󰈷" : "󰌾"
-          color: root.errorState ? Color.lock.textError : Util.alpha(Color.foreground, 0.6)
+          color: root.errorState ? Commons.Color.lock.textError : Util.alpha(Commons.Color.foreground, 0.6)
           font.family: Style.font.family
           font.pixelSize: Math.round(root.fieldHeight * 0.36)
         }
@@ -296,8 +297,8 @@ Item {
           visible: root.passwordText.length === 0
           text: root.errorState ? root.failureMessage : root.statusText
           color: root.errorState
-            ? Color.lock.textError
-            : (root.authenticatingPassword ? Color.lock.text : Color.lock.placeholder)
+            ? Commons.Color.lock.textError
+            : (root.authenticatingPassword ? Commons.Color.lock.text : Commons.Color.lock.placeholder)
           font.family: Style.font.family
           font.pixelSize: Style.font.subtitle
           font.italic: root.errorState
@@ -339,7 +340,7 @@ Item {
                 width: root.dotSize
                 height: root.dotSize
                 radius: width / 2
-                color: Color.lock.text
+                color: Commons.Color.lock.text
 
                 Component.onCompleted: {
                   if (index === root.passwordText.length - 1) popIn.start()
@@ -370,15 +371,15 @@ Item {
           height: width
           radius: width / 2
           color: root.passwordText.length > 0
-            ? Color.accent
-            : Util.alpha(Color.foreground, 0.12)
+            ? Commons.Color.accent
+            : Util.alpha(Commons.Color.foreground, 0.12)
 
           Behavior on color { ColorAnimation { duration: 140 } }
 
           Text {
             anchors.centerIn: parent
             text: "󰁔"
-            color: root.passwordText.length > 0 ? Color.lock.background : Util.alpha(Color.foreground, 0.5)
+            color: root.passwordText.length > 0 ? Commons.Color.lock.background : Util.alpha(Commons.Color.foreground, 0.5)
             font.family: Style.font.family
             font.pixelSize: Math.round(root.fieldHeight * 0.34)
           }
@@ -398,7 +399,7 @@ Item {
         Layout.topMargin: Math.round(6 * root.centerScale)
         visible: root.failedAttempts > 0
         text: root.failedAttempts + (root.failedAttempts === 1 ? " failed attempt" : " failed attempts")
-        color: Util.alpha(Color.lock.textError, 0.85)
+        color: Util.alpha(Commons.Color.lock.textError, 0.85)
         font.family: Style.font.family
         font.pixelSize: Style.font.bodySmall
       }
